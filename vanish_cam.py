@@ -25,12 +25,14 @@ try:
         load_log, overlay_log, render_substitution, substitution_anchor,
     )
     from .vanish_sound import SOUND_PATH, VanishSound
+    from .goku_effect import GokuSession, create_tracker, sound_path as goku_sound_path
 except ImportError:
     from naruto_effect import (
         EFFECT_SECONDS, joined_hands_from_landmarks, landed_log_anchor,
         load_log, overlay_log, render_substitution, substitution_anchor,
     )
     from vanish_sound import SOUND_PATH, VanishSound
+    from goku_effect import GokuSession, create_tracker, sound_path as goku_sound_path
 
 
 APP_DIR = Path(__file__).resolve().parent
@@ -99,7 +101,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--virtual-device", help="Nome del dispositivo virtuale da usare")
     parser.add_argument(
-        "--mode", choices=("normal", "naruto"),
+        "--mode", choices=("normal", "naruto", "goku"),
         help="Salta il menu iniziale e avvia direttamente la modalità scelta",
     )
     parser.add_argument(
@@ -114,13 +116,14 @@ def choose_mode() -> str | None:
     """Simple keyboard/mouse menu shown before the clean camera feed."""
     title = "Scegli effetto"
     selected = [None]
-    window = np.zeros((420, 700, 3), dtype=np.uint8)
+    window = np.zeros((540, 700, 3), dtype=np.uint8)
     window[:] = (26, 29, 34)
     cv2.putText(window, "SCEGLI IL TUO VANISH", (68, 88),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.85, (236, 239, 242), 2, cv2.LINE_AA)
     buttons = (
         ("normal", "1  NORMAL VANISH", "Segno a V  /  dissolvenza", 140),
         ("naruto", "2  NARUTO VANISH", "Mani unite  /  tronco e fumo", 260),
+        ("goku", "3  GOKU", "Due dita sulla fronte  /  teletrasporto", 380),
     )
     for mode, heading, detail, top in buttons:
         cv2.rectangle(window, (65, top), (635, top + 94), (48, 54, 62), -1, cv2.LINE_AA)
@@ -146,6 +149,8 @@ def choose_mode() -> str | None:
                 selected[0] = "normal"
             elif key == ord("2"):
                 selected[0] = "naruto"
+            elif key == ord("3"):
+                selected[0] = "goku"
             elif key in (ord("q"), 27):
                 return None
             if cv2.getWindowProperty(title, cv2.WND_PROP_VISIBLE) < 1:
@@ -191,7 +196,7 @@ def send_virtual_frame(camera, frame: np.ndarray) -> None:
 def download_models(mode: str = "normal") -> None:
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
     for destination, url in MODEL_URLS.items():
-        if mode == "naruto" and destination == GESTURE_MODEL:
+        if mode in ("naruto", "goku") and destination == GESTURE_MODEL:
             continue
         if destination.exists() and destination.stat().st_size > 100_000:
             continue
@@ -249,6 +254,13 @@ def create_tasks(mode: str = "normal") -> tuple[vision.ImageSegmenter, MultiView
         output_confidence_masks=True,
         output_category_mask=False,
     )
+    if mode == "goku":
+        segmenter = vision.ImageSegmenter.create_from_options(segmenter_options)
+        try:
+            return segmenter, create_tracker(HAND_MODEL)
+        except Exception:
+            segmenter.close()
+            raise
     if mode == "naruto":
         if not HAND_MODEL.is_file():
             raise RuntimeError(f"Modello delle mani non trovato: {HAND_MODEL}")
@@ -640,7 +652,7 @@ def self_test() -> int:
         raise RuntimeError(f"Risorse mancanti: {', '.join(missing)}")
     load_log()
     import pygame.mixer  # The distributed build must contain its MP3 decoder.
-    for mode in ("normal", "naruto"):
+    for mode in ("normal", "naruto", "goku"):
         segmenter, recognizer = create_tasks(mode)
         try:
             recognizer.close()
@@ -671,6 +683,10 @@ def run_camera(args: argparse.Namespace, resources: ExitStack, mode: str) -> int
     resources.callback(recognizer.close)
     log_sprite = load_log() if mode == "naruto" else None
     vanish_sound = VanishSound() if mode == "naruto" else None
+    goku = None
+    if mode == "goku":
+        vanish_sound = VanishSound(goku_sound_path())
+        goku = GokuSession()
     if vanish_sound is not None:
         resources.callback(vanish_sound.close)
     resources.callback(cv2.destroyAllWindows)
@@ -745,6 +761,19 @@ def run_camera(args: argparse.Namespace, resources: ExitStack, mode: str) -> int
                 state.phase = "calibrating"
                 state.calibration_started = now
                 display = camera_frame
+
+            elif mode == "goku":
+                display = goku.step(
+                    camera_frame, background, now, elapsed_ms, recognizer,
+                    lambda image, ts: person_mask(
+                        segmenter,
+                        mp.Image(image_format=mp.ImageFormat.SRGB,
+                                 data=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)),
+                        ts, width, height),
+                    vanish_sound, debug=args.gesture_debug and now - last_gesture_report >= 1.0,
+                )
+                if args.gesture_debug and now - last_gesture_report >= 1.0:
+                    last_gesture_report = now
 
             elif state.phase == "vanished":
                 if vanished_frame is None:
@@ -841,7 +870,11 @@ def run_camera(args: argparse.Namespace, resources: ExitStack, mode: str) -> int
                 vanished_frame = None
                 background_samples.clear()
                 calibration_remaining = None
+                if goku is not None:
+                    goku.reset()
                 print("[Webcam] Esci dall'inquadratura per 4 secondi: acquisisco il nuovo sfondo.")
+            elif mode == "goku" and key in (ord("r"), ord("v")):
+                pass  # In Goku mode the gesture is the only trigger.
             elif key == ord("r"):
                 if background is not None:
                     state.phase = "ready"
