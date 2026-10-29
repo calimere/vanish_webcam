@@ -1,34 +1,28 @@
-# VanishCam — webcam disappearance effects
+# VanishCam — effets de disparition pour webcam
 
-Video is processed on your computer. It is neither recorded nor sent to a server. The preview window and virtual camera show only the video and effects, without overlaid menus, instructions, or text.
+La vidéo est traitée sur votre ordinateur. Elle n'est ni enregistrée ni envoyée à un serveur. La fenêtre d'aperçu et la webcam virtuelle n'affichent que la vidéo et les effets, sans menus, instructions ni texte superposés.
 
-For step-by-step instructions in English and Italian, see the [user guide](USER_GUIDE_EN_IT.md).
+Pour un guide pas à pas en anglais et en italien, consultez le [guide utilisateur](USER_GUIDE_EN_IT.md).
 
-## ☕ Buy me a coffee
+## ☕ Offrez-moi un café
 
-If you like this project and want to support it, you can buy me a coffee through [PayPal](https://paypal.me/nicovic17) or [Revolut](https://revolut.me/nicoauriemma).
+Si vous aimez ce projet et souhaitez le soutenir, vous pouvez m'offrir un café via [PayPal](https://paypal.me/nicovic17) ou [Revolut](https://revolut.me/nicoauriemma).
 
-## Download for Windows
+## Premiers pas
 
-[Download VanishCam.exe]( https://nicoaauriemma.vercel.app/shop ) and double-click it to run the app. You do not need to install Python.
+1. Double-cliquez sur `AVVIA_LOCALE.bat`.
+2. Dans le menu de démarrage, choisissez **Normal Vanish**, **Naruto Vanish**, **Particles** ou **Goku** avec la souris ou les touches `1`, `2`, `3` et `4`.
+3. Sortez du champ de la caméra pendant 4 secondes, le temps que l'arrière-plan soit capturé. Le terminal indique quand vous pouvez revenir.
 
-The published EXE may predate the Particles and Goku modes. To use them now, run the local scripts or rebuild the EXE from these sources.
+**Normal Vanish :** levez l'index et le majeur en signe V. Le fondu démarre dès que le geste est reconnu et dure environ 3,6 secondes.
 
-## Getting started
+**Particles :** faites le même signe V que pour Normal Vanish. Votre silhouette se brise en petits fragments colorés qui dérivent latéralement, comme emportés par le vent. L'effet dure environ 2,1 secondes. La silhouette est capturée une seule fois au début de l'effet pour que la vidéo reste fluide.
 
-1. Double-click `AVVIA_LOCALE.bat`.
-2. In the start menu, choose **Normal Vanish**, **Naruto Vanish**, **Particles**, or **Goku** with the mouse or the `1`, `2`, `3`, and `4` keys.
-3. Step out of the camera frame for 4 seconds while the background is captured. The terminal tells you when you can step back in.
+**Goku :** tenez l'index et le majeur tendus et joints contre votre front pendant 1 seconde. Des lignes verticales animées, façon bande dessinée, traversent votre silhouette juste avant votre téléportation et persistent brièvement ensuite. Pour réapparaître, baissez la main puis refaites le geste pendant 1 seconde. Le retour utilise l'effet inverse. Si vous interrompez la pose, le compte à rebours repart de zéro. `assets/teleport.MP3` est joué à la disparition comme à la réapparition. Le terminal affiche le compte à rebours de chaque geste. Les touches `V` et `R` sont désactivées dans ce mode : le geste est le seul moyen de disparaître et de réapparaître. Aucun texte n'est superposé à la vidéo.
 
-**Normal Vanish:** Raise your index and middle fingers in a V sign. The dissolve starts as soon as the gesture is recognized and lasts about 3.6 seconds.
+**Naruto Vanish :** joignez les paumes devant la webcam, doigts côte à côte et non entrelacés. Gardez les deux mains visibles. Dès que le geste est reconnu, vous disparaissez dans un nuage de fumée et un tronc de bois apparaît, tombe et reste visible jusqu'à ce que vous appuyiez sur `R`. Aucun microphone n'est nécessaire. Le mode Naruto utilise `hand_landmarker.task` pour suivre les deux mains. `assets/vanish.MP3` est joué par les haut-parleurs de l'ordinateur au début de la disparition, y compris lorsqu'elle est déclenchée avec `V`. Vous pouvez la redéclencher après avoir appuyé sur `R`.
 
-**Particles:** Make the same V sign as in Normal Vanish. Your silhouette breaks into small colored fragments that drift sideways as if carried by the wind. The effect lasts about 2.1 seconds. It captures your silhouette once when the effect starts to keep the video smooth.
-
-**Goku:** Hold your index and middle fingers straight and together against your forehead for 1 second. Animated vertical comic-style lines run across your silhouette just before you teleport away and linger briefly afterward. To reappear, lower your hand, then repeat the gesture for another 1 second. The return uses the reverse effect. If you break the pose, the countdown starts over. `assets/teleport.MP3` plays on both disappearance and reappearance. The terminal shows the countdown for each gesture. The `V` and `R` keys are disabled in this mode: the gesture is the only way to disappear and reappear. No text is overlaid on the video.
-
-**Naruto Vanish:** Bring your palms together in front of the webcam, with your fingers side by side rather than interlaced. Keep both hands visible. As soon as the gesture is recognized, you vanish in a cloud of smoke and a wooden log appears, falls, and remains visible until you press `R`. No microphone is needed. Naruto mode uses `hand_landmarker.task` to track both hands. `assets/vanish.MP3` plays through your computer speakers when the disappearance starts, including when triggered with `V`. You can trigger it again after pressing `R`.
-
-To start a mode without the menu:
+Pour lancer un mode sans passer par le menu :
 
 ```powershell
 local_app\AVVIA_LOCALE.bat --mode naruto
@@ -37,38 +31,38 @@ local_app\AVVIA_LOCALE.bat --mode particles
 local_app\AVVIA_LOCALE.bat --mode goku
 ```
 
-## Virtual camera and OBS
+## Webcam virtuelle et OBS
 
-If [OBS Studio](https://obsproject.com/) is installed, the app automatically tries to open **OBS Virtual Camera**. The terminal shows the device name. Use `AVVIA_VIRTUAL.bat` to require a virtual camera. Select **OBS Virtual Camera** in the app that will receive the video. OBS's virtual camera must be stopped while this app is producing its output.
+Si [OBS Studio](https://obsproject.com/) est installé, l'application essaie automatiquement d'ouvrir **OBS Virtual Camera**. Le terminal affiche le nom du périphérique. Utilisez `AVVIA_VIRTUAL.bat` pour exiger une webcam virtuelle. Sélectionnez **OBS Virtual Camera** dans l'application qui doit recevoir la vidéo. La caméra virtuelle d'OBS doit être arrêtée tant que cette application produit sa sortie.
 
-To use the effect in an OBS scene, run `AVVIA_OBS.bat`, add a **Window Capture** source, select **Webcam - Anteprima**, and then start the virtual camera from OBS. Alternatively, use [Unity Capture](https://github.com/schellingb/UnityCapture) as a separate virtual video source:
+Pour utiliser l'effet dans une scène OBS, lancez `AVVIA_OBS.bat`, ajoutez une source **Capture de fenêtre**, sélectionnez **Webcam - Apercu**, puis démarrez la caméra virtuelle depuis OBS. Vous pouvez aussi utiliser [Unity Capture](https://github.com/schellingb/UnityCapture) comme source vidéo virtuelle distincte :
 
 ```powershell
 local_app\AVVIA_VIRTUAL.bat --virtual-backend unitycapture
 ```
 
-OBS has only one virtual camera. Do not use it as both an OBS input and output at the same time. See the [pyvirtualcam documentation](https://github.com/letmaik/pyvirtualcam#supported-virtual-cameras).
+OBS ne dispose que d'une seule caméra virtuelle. Ne l'utilisez pas à la fois comme entrée et comme sortie d'OBS. Consultez la [documentation de pyvirtualcam](https://github.com/letmaik/pyvirtualcam#supported-virtual-cameras).
 
-## Controls
+## Commandes
 
-- `SPACE`: capture a new background.
-- `R`: make the person reappear.
-- `V`: manually start the selected mode's effect.
-- `F`: toggle fullscreen.
-- `Q` or `ESC`: quit and release the cameras.
+- `ESPACE` : capturer un nouvel arrière-plan.
+- `R` : faire réapparaître la personne.
+- `V` : déclencher manuellement l'effet du mode sélectionné.
+- `F` : activer ou désactiver le plein écran.
+- `Q` ou `ÉCHAP` : quitter et libérer les caméras.
 
-The `V` and `R` keys are disabled in Goku mode.
+Les touches `V` et `R` sont désactivées dans le mode Goku.
 
-You can change the camera, resolution, and maximum virtual-output FPS:
+Vous pouvez changer la caméra, la résolution et le nombre maximal d'images par seconde de la sortie virtuelle :
 
 ```powershell
 local_app\AVVIA_LOCALE.bat --camera 1 --width 1280 --height 720 --fps 30
 ```
 
-To troubleshoot gesture recognition without adding text to the video, pass `--gesture-debug`. Diagnostic information appears only in the terminal.
+Pour diagnostiquer la reconnaissance des gestes sans ajouter de texte à la vidéo, ajoutez `--gesture-debug`. Les informations de diagnostic n'apparaissent que dans le terminal.
 
-## Visual assets
+## Ressources visuelles
 
-The [wooden log](assets/substitution_log.png) is an original illustration generated with ImageGen using the supplied image as a visual reference. Smoke is drawn in real time by `naruto_effect.py` so it follows the person's position and scales with the video. We also considered a [CC0 smoke sprite sheet](https://opengameart.org/content/smoke-sprite-sheet), but the procedural animation adapts better to dynamic positioning without an additional asset. No anime frames or assets are included in the project.
+Le [tronc de bois](assets/substitution_log.png) est une illustration originale générée avec ImageGen à partir de l'image fournie comme référence visuelle. La fumée est dessinée en temps réel par `naruto_effect.py` : elle suit la position de la personne et s'adapte à l'échelle de la vidéo. Nous avons aussi envisagé une [planche de sprites de fumée CC0](https://opengameart.org/content/smoke-sprite-sheet), mais l'animation procédurale s'adapte mieux au positionnement dynamique sans ressource supplémentaire. Aucune image ni ressource d'anime n'est incluse dans le projet.
 
-Goku mode uses the [MediaPipe BlazeFace short-range model](https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/tasks/web/vision/README.md) to estimate the forehead position and `hand_landmarker.task` to track the fingers. The teleport's visual trace is drawn in code, without anime frames.
+Le mode Goku utilise le [modèle BlazeFace à courte portée de MediaPipe](https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/tasks/web/vision/README.md) pour estimer la position du front, et `hand_landmarker.task` pour suivre les doigts. La traînée visuelle de la téléportation est dessinée par le code, sans images d'anime.
