@@ -4,10 +4,6 @@ La vidéo est traitée sur votre ordinateur. Elle n'est ni enregistrée ni envoy
 
 Pour un guide pas à pas en anglais et en italien, consultez le [guide utilisateur](USER_GUIDE_EN_IT.md).
 
-## ☕ Offrez-moi un café
-
-Si vous aimez ce projet et souhaitez le soutenir, vous pouvez m'offrir un café via [PayPal](https://paypal.me/nicovic17) ou [Revolut](https://revolut.me/nicoauriemma).
-
 ## Premiers pas
 
 1. Double-cliquez sur `AVVIA_LOCALE.bat`.
